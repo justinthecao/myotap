@@ -10,8 +10,12 @@
     <include file="myohand_tabletop.xml"/>
     <include file="../../../../simhive/object_sim/common.xml"/>
     <include file="../../../../simhive/object_sim/OBJECT_NAME/assets.xml"/>
-
+    <asset>
+        <material name="point_material" rgba="1 0 0 1"/>
+    </asset>
     <worldbody>
+        <site name="IFtip_target" pos="0.05 0.1 0.3" size="0.01" material="point_material"/>
+        
         <!-- <body name="OBJECT_NAME" pos="0.00 0.0 .045" childclass="grab"> -->
         <body name="OBJECT_NAME" pos="0.00 0.0 .035" childclass="grab">
             <joint name="OBJTx" pos="0 0 0" axis="1 0 0" type="slide"/>

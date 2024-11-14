@@ -16,7 +16,8 @@ ReferenceStruct = collections.namedtuple('ReferenceStruct',
          'robot_vel',   # shape(N, n_robot_jnt) ==> robot velocity
          'object',      # shape(M, n_objects_jnt) ==> object trajectory
          'robot_init',  # shape(n_objects_jnt) ==> initial robot pose (can be different from robot(0,n_robot_jnt))
-         'object_init'  # shape(n_objects_jnt) ==> initial object (can be different from object(0,n_object_jnt))
+         'object_init',  # shape(n_objects_jnt) ==> initial object (can be different from object(0,n_object_jnt))
+         'IFtip_target'
          ])
 
 
@@ -104,7 +105,8 @@ class ReferenceMotion():
             assert reference['object_init'].ndim == 1, "Check object_init reference, must be shape(n_object_jnt)"
         if reference['object_init'] is not None and reference['object'] is not None:
             assert reference['object_init'].shape[0] == reference['object'].shape[1], "n_object_jnt different between motion and init "
-
+        if reference['IFtip_target'] is not None:
+            assert reference['IFtip_target'].ndim == 1, "Check target index reference, must be shape(1,)"
 
     def load(self, reference_data):
         """
@@ -140,6 +142,7 @@ class ReferenceMotion():
             object = reference['object'] if 'object' in reference.keys() else None,
             robot_init = reference['robot_init'],
             object_init = reference['object_init'],
+            IFtip_target = reference['IFtip_target'] if 'IFtip_target' in reference.keys() else None
         )
         return ref._asdict()
 
@@ -259,6 +262,7 @@ class ReferenceMotion():
             object = object_ref,
             robot_init = self.reference['robot_init'],
             object_init = self.reference['object_init'],
+            IFtip_target = self.reference['IFtip_target'] if 'IFtip_target' in self.reference.keys() else None
             )
 
 
