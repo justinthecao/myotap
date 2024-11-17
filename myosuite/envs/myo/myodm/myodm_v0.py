@@ -33,8 +33,8 @@ class TrackEnv(BaseV0):
     DEFAULT_OBS_KEYS = ['qpos', 'qvel', 'tip_pos', 'reach_err']
     DEFAULT_RWD_KEYS_AND_WEIGHTS = {
         "reach": 1.0,
-        "bonus": 4.0,
-        "penalty": 50,
+        "bonus": 25.0,
+        "penalty": 100,
     }
 
     def __init__(
@@ -156,7 +156,7 @@ class TrackEnv(BaseV0):
 
         self._lift_z = self.sim.data.xipos[self.object_bid][2] + self.lift_bonus_thresh
 
-        self.far_th = 0.02
+        self.far_th = 0.001
         super()._setup(
             obs_keys=obs_keys,
             weighted_reward_keys=weighted_reward_keys,
@@ -223,8 +223,8 @@ class TrackEnv(BaseV0):
             obs_dict['tip_pos'] = np.append(obs_dict['tip_pos'], sim.data.site_xpos[self.tip_sids[isite]].copy())
             obs_dict['target_pos'] = np.append(obs_dict['target_pos'], sim.data.site_xpos[self.target_sids[isite]].copy())
         obs_dict['reach_err'] = np.array(obs_dict['target_pos'])-np.array(obs_dict['tip_pos'])
-        print("target " + np.array(obs_dict['target_pos']))
-        print("tip_pos " + np.array(obs_dict['tip_pos']))
+        print("target " + str(np.array(obs_dict['target_pos'])))
+        print("tip_pos " + str(np.array(obs_dict['tip_pos'])))
         return obs_dict
 
     def get_reward_dict(self, obs_dict):
@@ -235,12 +235,12 @@ class TrackEnv(BaseV0):
 
         rwd_dict = collections.OrderedDict((
             # Optional Keys
-            ('reach',   -10000.*reach_dist),
+            ('reach',   -1.*reach_dist),
             ('bonus',   1.*(reach_dist<2*near_th) + 1.*(reach_dist<near_th)),
             ('act_reg', -1.*act_mag),
             ('penalty', -1.*(reach_dist>far_th)),
             # Must keys
-            ('sparse',  -10000.*reach_dist),
+            ('sparse',  -1.*reach_dist),
             ('solved',  reach_dist<near_th),
             ('done',    reach_dist>far_th),
         ))
@@ -249,7 +249,7 @@ class TrackEnv(BaseV0):
 
     def qpos_from_robot_object(self, qpos, robot, object):
         qpos[: len(robot)] = robot
-        qpos[len(robot) : len(robot) + 3] = object[:3]
+        qpos[len(robot) : len(robot) + 3] = object[:3] 
         qpos[len(robot) + 3 :] = quat2euler(object[3:])
 
     def playback(self):

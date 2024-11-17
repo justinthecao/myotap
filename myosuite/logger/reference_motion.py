@@ -254,7 +254,7 @@ class ReferenceMotion():
                 elif self.object_horizon>1:
                     object_ref = (1.0-blend)*self.reference['object'][ind]+blend*self.reference['object'][ind_next]
                 else:
-                    object_ref = self.reference['object'][0]
+                    object_ref = self.reference['object'][0] 
 
         return ReferenceStruct(time = time,
             robot = robot_ref,
