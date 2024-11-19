@@ -152,7 +152,6 @@ def register_MyoHand_object(object_name):
                                 'robot_vel':np.zeros((1,dof_robot)),
                                 'object_init':np.array((-.2, -.2, 0.1, 1.0, 0.0, 0.0, 0.0)),
                                 'object':np.reshape(np.array((.2, .2, 0.1, 1.0, 0.0, 0.0, 0.1)), (1,7)),
-                                'IFtip_target':(0.0, 0.0, 0.15)
                             }
             }
     )
@@ -173,9 +172,54 @@ def register_MyoHand_object(object_name):
                                 'object_init':np.array((0.0, 0.0, 0.1, 1.0, 0.0, 0.0, 0.0)),
                                 'object':np.array([ [-.2, -.2, 0.1, 1.0, 0.0, 0.0, -1.0],
                                                     [0.2, 0.2, 0.1, 1.0, 0.0, 0.0, 1.0]]),
-                                'IFtip_target':(0.0, 0.0, 0.15)
                             }
             }
     )
+
+
+def register_MyoHandTap_object(object_name):
+
+    dof_robot = 29
+    task_name = 'MyoHandTap{}Fixed-v0'.format(object_name.title())
+    print("'"+task_name+"'", end=", ")
+
+    # Envs with fixed target
+    register(
+        id=task_name,
+        entry_point='myosuite.envs.myo.myodm.myodm_v0_reach:TrackEnv',
+        max_episode_steps=50, #50steps*40Skip*2ms = 4s
+        kwargs={
+                'model_path': '/../assets/hand/myohand_object.xml',
+                'object_name': object_name,
+                'reference': {'time':(0.0, 4.0),
+                                'robot':np.zeros((1, dof_robot)),
+                                'robot_vel':np.zeros((1,dof_robot)),
+                                'object_init':np.array((-.2, -.2, 0.1, 1.0, 0.0, 0.0, 0.0)),
+                                'object':np.reshape(np.array((.2, .2, 0.1, 1.0, 0.0, 0.0, 0.1)), (1,7)),
+                            }
+            }
+    )
+
+    # Envs with random target
+    task_name = 'MyoHandTap{}Random-v0'.format(object_name.title())
+    # print("'"+task_name+"'", end=", ")
+    register(
+        id=task_name,
+        entry_point='myosuite.envs.myo.myodm.myodm_v0_reach:TrackEnv',
+        max_episode_steps=50, #50steps*40Skip*2ms = 4s
+        kwargs={
+                'model_path': '/../assets/hand/myohand_object.xml',
+                'object_name': object_name,
+                'reference': {'time':(0.0, 4.0),
+                                'robot':np.zeros((2, dof_robot)),
+                                'robot_vel':np.zeros((2, dof_robot)),
+                                'object_init':np.array((0.0, 0.0, 0.1, 1.0, 0.0, 0.0, 0.0)),
+                                'object':np.array([ [-.2, -.2, 0.1, 1.0, 0.0, 0.0, -1.0],
+                                                    [0.2, 0.2, 0.1, 1.0, 0.0, 0.0, 1.0]]),
+                            }
+            }
+    )
+
 for obj in OBJECTS:
     register_MyoHand_object(obj)
+    register_MyoHandTap_object(obj)
